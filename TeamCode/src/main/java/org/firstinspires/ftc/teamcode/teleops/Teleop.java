@@ -3,12 +3,13 @@ package org.firstinspires.ftc.teamcode.teleops;
 import static org.firstinspires.ftc.teamcode.subsystems.pedroPathingSubsystem.EndPose;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 
-import org.firstinspires.ftc.teamcode.subsystems.commands.turretManual;
+import org.firstinspires.ftc.teamcode.subsystems.intake.moveIntakeTeleOpCMD;
 import org.firstinspires.ftc.teamcode.subsystems.pedroPathingSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.shooterToBasketTeleOpCMD;
-import org.firstinspires.ftc.teamcode.subsystems.turretSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.turret.turretDefaultTeleopCMD;
+import org.firstinspires.ftc.teamcode.subsystems.turret.turretSubsystem;
 import org.firstinspires.ftc.teamcode.utilities.Alliance;
 import org.firstinspires.ftc.teamcode.utilities.OpModeCommand;
 
@@ -28,7 +29,9 @@ public abstract class Teleop extends OpModeCommand {
     GamepadEx chassis;
     GamepadEx garra;
     double angleOffSet;
-    static double shooterTarget;
+    static double shooterTarget = 2250;
+    Boolean isTurretManual = true;
+
     turretSubsystem turretSb;
 
     @Override
@@ -53,36 +56,40 @@ public abstract class Teleop extends OpModeCommand {
         CommandScheduler.getInstance().registerSubsystem(turretSb);
         turretSb.setAngle(0);
 
-        CommandScheduler.getInstance().setDefaultCommand(
-                turretSb,
-                new turretManual(
-                        turretSb,
-                        () -> gamepad2.left_bumper,
-                        () -> gamepad2.right_bumper
-                )
-        );
+        CommandScheduler.getInstance().setDefaultCommand(turretSb, new turretDefaultTeleopCMD(turretSb, VisionSb, () -> isTurretManual, gamepad2));
+
 
 
         /// //////////////////////////////////
 
-        Trigger intakeIn = new Trigger(() -> gamepad2.right_trigger >= 0.3);
-        Trigger intakeOut = new Trigger(() -> gamepad2.left_trigger >= 0.3);
+        Trigger intakeIn = new Trigger(() -> gamepad2.left_trigger >= 0.3);
+        Trigger intakeOut = new Trigger(() -> gamepad2.right_trigger >= 0.3);
 
-        intakeIn.whileActiveOnce(new InstantCommand(()-> intakeSb.setIntakePower(1,0.5)));
-        intakeOut.whileActiveOnce(new InstantCommand(()-> intakeSb.setIntakePower(-1,-0.5)));
+        intakeIn.whileActiveOnce(new moveIntakeTeleOpCMD(intakeSb,1,-0.5));
+        intakeOut.whileActiveOnce(new moveIntakeTeleOpCMD(intakeSb,-1,0.5));
 
 
         Button blockPollen = new GamepadButton(
                 garra,
                 GamepadKeys.Button.DPAD_DOWN);
 
-        blockPollen.whenPressed(new InstantCommand(() -> intakeSb.transBlock()));
+        //blockPollen.whenPressed(new InstantCommand(() -> intakeSb.transBlock()));
+
+        blockPollen.whenPressed(new SequentialCommandGroup(
+                new InstantCommand(() -> intakeSb.transBlock()),
+                new InstantCommand(() -> intakeSb.setIntakePower(0, 0)),
+                new InstantCommand(() -> shooterSb.setShooterTarget(() -> shooterTarget))));
 
         Button releasePollen = new GamepadButton(
                 garra,
                 GamepadKeys.Button.DPAD_UP);
 
-        releasePollen.whenPressed(new InstantCommand(() -> intakeSb.transBlock()));
+       // releasePollen.whenPressed(new InstantCommand(() -> intakeSb.transRelease()));
+
+        releasePollen.whenPressed(new SequentialCommandGroup(
+                new InstantCommand(() -> intakeSb.transRelease()),
+                new InstantCommand(() -> intakeSb.setIntakePower(-0.8, 1)),
+                new InstantCommand(() -> shooterSb.setShooterTarget(() -> shooterTarget))));
 
 
         Button flowerUp = new GamepadButton(
@@ -97,7 +104,7 @@ public abstract class Teleop extends OpModeCommand {
         flowerDown.whenPressed(new InstantCommand(() -> intakeSb.flowerDown()));
 
 
-        Button startShooter = new GamepadButton(
+     /*   Button startShooter = new GamepadButton(
                 garra,
                 GamepadKeys.Button.B);
         startShooter.whenPressed(new InstantCommand(() -> shooterSb.setShooterTarget(() -> shooterTarget)));
@@ -106,10 +113,12 @@ public abstract class Teleop extends OpModeCommand {
         Button stopShooter = new GamepadButton(
                 garra,
                 GamepadKeys.Button.A);
-        stopShooter.whenPressed(new InstantCommand(() -> shooterSb.setShooterTarget(0)));
+        stopShooter.whenPressed(new InstantCommand(() -> shooterSb.setShooterTarget(shooterTarget -300)));
+*/
 
 
-        CommandScheduler.getInstance().setDefaultCommand(shooterSb,new shooterToBasketTeleOpCMD(shooterSb, VisionSb, turretSb, 1700.0));
+
+        //CommandScheduler.getInstance().setDefaultCommand(shooterSb,new shooterToBasketTeleOpCMD(shooterSb, VisionSb, turretSb, 1700.0));
 
     }
 

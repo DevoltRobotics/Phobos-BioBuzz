@@ -1,9 +1,13 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.turret;
 
+import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.telemetry.PanelsTelemetry;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
-
+import com.seattlesolvers.solverslib.controller.PIDFController;
+@Configurable
 public class turretSubsystem extends SubsystemBase {
 
     private final Servo leftTurret;
@@ -21,11 +25,17 @@ public class turretSubsystem extends SubsystemBase {
     private static final double MIN_POSITION = 0.0;
     private static final double MAX_POSITION = 1.0;
 
-    private double targetAngle = 0.0;
+    public double targetAngle = 0.0;
+
+    public static PIDFCoefficients llPidCoeffs = new PIDFCoefficients(0.2, 0.0, 0.013, 0);
+    public PIDFController llPidf;
+    public boolean realIsManual;
 
     public turretSubsystem(HardwareMap hwMap) {
         leftTurret = hwMap.get(Servo.class, "turret");
         rightTurret = hwMap.get(Servo.class, "turret2");
+
+        llPidf = new PIDFController(llPidCoeffs);
 
         // Si los dos servos están en espejo mecánico y giran en sentido opuesto,
         // uno de ellos debe invertirse:
@@ -45,6 +55,8 @@ public class turretSubsystem extends SubsystemBase {
 
         leftTurret.setPosition(servoPosition);
         rightTurret.setPosition(servoPosition);
+
+
     }
 
     private double map(double val, double inMin, double inMax, double outMin, double outMax) {
@@ -57,6 +69,12 @@ public class turretSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        llPidf.setCoefficients(llPidCoeffs);
+        llPidf.setSetPoint(0);
+
+        PanelsTelemetry.INSTANCE.getFtcTelemetry().addData("turretTarget", getTargetAngle());
+
+
         // Ejecución continua si se requiere en el futuro
     }
 }

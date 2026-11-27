@@ -26,7 +26,7 @@ public class shooterSubsystem extends SubsystemBase {
 
 
     PIDFController shooterController;
-    PIDFCoefficients shooterCoeffs;
+    PIDFCoefficients shooterCoeffs = new PIDFCoefficients(0.015,0,0,0);
 
     Telemetry telemetry;
 
@@ -63,7 +63,6 @@ public class shooterSubsystem extends SubsystemBase {
         shootL = hMap.get(DcMotorEx.class, "shootL");
         shootR = hMap.get(DcMotorEx.class, "shootR");
 
-        shootL.setDirection(DcMotorSimple.Direction.REVERSE);
         shootL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shootR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -84,20 +83,24 @@ public class shooterSubsystem extends SubsystemBase {
     public void periodic() {
 
 
-        double motorVel = shootL.getVelocity();
-
         double sTarget = shooterTarget.getAsDouble();
 
         shooterController.setSetPoint(sTarget);
 
+        double motorVel = -shootR.getVelocity();
         double shooterTargetPwr = (shooterkV * sTarget) + shooterController.calculate(motorVel);
 
 
+        shootR.setPower(shooterTargetPwr);
+        shootL.setPower(-shooterTargetPwr);
+
         shooterError = (sTarget - motorVel);
+
+
 
         telemetry.addLine("-----------------------------");
         telemetry.addData("shooterTargetPwr", shooterTargetPwr);
-        telemetry.addData("shooterTarget", shooterTarget);
+        telemetry.addData("shooterTarget", sTarget);
         telemetry.addData("shooterError", shooterError);
         PanelsTelemetry.INSTANCE.getFtcTelemetry().addData("shooterTarget", shooterTarget);
 

@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.utilities;
 
-import android.os.Trace;
-
 import com.bylazar.telemetry.JoinedTelemetry;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.pedropathing.follower.Follower;
@@ -10,23 +8,13 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
-import com.seattlesolvers.solverslib.command.ConditionalCommand;
-import com.seattlesolvers.solverslib.command.InstantCommand;
-import com.seattlesolvers.solverslib.command.ParallelDeadlineGroup;
-import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
-import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.Subsystem;
-import com.seattlesolvers.solverslib.command.WaitCommand;
 
+import org.firstinspires.ftc.teamcode.subsystems.intake.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
-import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.vision.VisionSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.pedroPathingSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.shooterSubsystem;
-import org.firstinspires.ftc.teamcode.utilities.Alliance;
-
-import java.util.function.BooleanSupplier;
-import java.util.regex.Pattern;
 
 public abstract class OpModeCommand extends OpMode {
 
@@ -84,7 +72,7 @@ public abstract class OpModeCommand extends OpMode {
                 PanelsTelemetry.INSTANCE.getFtcTelemetry()
         );
 
-        follower = Constants.create(hardwareMap);
+       follower = Constants.create(hardwareMap);
 
         follower.update();
 

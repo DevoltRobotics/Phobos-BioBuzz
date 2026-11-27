@@ -6,6 +6,6 @@ import org.firstinspires.ftc.teamcode.utilities.Alliance;
 @TeleOp
 public class teleopRed extends Teleop{
     public teleopRed() {
-        super(Alliance.BLUE);
+        super(Alliance.RED);
     }
 }

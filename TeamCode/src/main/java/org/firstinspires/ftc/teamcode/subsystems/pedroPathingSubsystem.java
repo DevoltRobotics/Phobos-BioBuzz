@@ -96,19 +96,24 @@ public class pedroPathingSubsystem extends SubsystemBase {
                 }
 
                 DrivePowers powers = ManualDrive.fieldCentric(
-                        -gamepad1.left_stick_y*multiplier,
-                        gamepad1.left_stick_x*multiplier,
-                        gamepad1.right_stick_x*multiplier,
+                        -gamepad.left_stick_y*multiplier,
+                        -gamepad.left_stick_x*multiplier,
+                        -gamepad.right_stick_x*multiplier,
                         follower.pose().heading()
                 );
                 follower.manual(powers);
 
+
+                if (gamepad.yWasPressed()) {
+                    follower.setPose(new Pose(0,0,0));
             /*if (gamepad.yWasPressed()) {
                 follower.setPose(new Pose(follower.getPose().getX(), follower.getPose().getY(), angleOffset));
             }
 
              */
             }
+
+                }
 
             @Override
             public void end(boolean interrupted) {

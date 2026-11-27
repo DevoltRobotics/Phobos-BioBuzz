@@ -1,16 +1,13 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.vision;
 
 
 import com.pedropathing.follower.Follower;
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.utilities.Alliance;
 
 public class VisionSubsystem extends SubsystemBase {
@@ -44,10 +41,10 @@ public class VisionSubsystem extends SubsystemBase {
         ll.setPollRateHz(100);
         ll.start();
 
-        ll.pipelineSwitch(2);
-        if (alliance == Alliance.RED){
+
+        if (alliance == Alliance.BLUE){
             ll.pipelineSwitch(0);
-        } else if (alliance == Alliance.BLUE) {
+        } else if (alliance == Alliance.RED) {
             ll.pipelineSwitch(1);
         }
 

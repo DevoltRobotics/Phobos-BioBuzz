@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems.commands;
 
 import com.seattlesolvers.solverslib.command.CommandBase;
 
-import org.firstinspires.ftc.teamcode.subsystems.turretSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.turret.turretSubsystem;
 
 import java.util.function.BooleanSupplier;
 
